@@ -1,0 +1,52 @@
+#!/usr/bin/env sh
+
+# adopted from tj/git-extra
+is_git_repo() {
+  git rev-parse --show-toplevel > /dev/null 2>&1
+  result=$?
+  if test $result != 0; then
+    >&2 echo 'Not a git repo!'
+    exit $result
+  fi
+}
+
+is_git_repo
+
+function usage() {
+  cat <<EOF
+usage: git upstream <command> [<args>]
+
+commands:
+  add <owner>
+  remove
+  sync
+EOF
+}
+
+
+if test -z $1; then
+  usage
+  exit
+fi
+
+case $1 in
+  add)
+    test -z $2 && echo "owner required." 1>&2 && exit 1
+    OWNER=$2
+    REPO=$(git config --get remote.origin.url | sed 's/[^\/]*\///' | sed 's/\.git$//')
+    git remote add upstream https://github.com/$OWNER/$REPO.git
+    git remote -v
+    ;;
+  remove)
+    git remote remove upstream
+    git remote -v
+    ;;
+  sync)
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    git fetch upstream
+    git merge upstream/$BRANCH
+    ;;
+  *)
+    >&2 echo "error: '$1' is not a git-upstream command" && exit 1
+    ;;
+esac
