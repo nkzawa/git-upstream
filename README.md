@@ -2,8 +2,13 @@
 Git shortcuts for syncing a fork
 
 ```sh
+# Specify the original owner
 git upstream add <owner>
-git upstream remove
+
+# Verify the upstream repository
+git upstream
+
+# Sync with upstream repository
 git upstream sync
 ```
 
