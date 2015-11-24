@@ -20,14 +20,9 @@ commands:
   add <owner>
   remove
   sync
+  help
 EOF
 }
-
-
-if test -z $1; then
-  usage
-  exit
-fi
 
 case $1 in
   add)
@@ -35,16 +30,26 @@ case $1 in
     OWNER=$2
     REPO=$(git config --get remote.origin.url | sed 's/[^\/]*\///' | sed 's/\.git$//')
     git remote add upstream https://github.com/$OWNER/$REPO.git
-    git remote -v
     ;;
   remove)
     git remote remove upstream
-    git remote -v
     ;;
   sync)
     BRANCH=$(git rev-parse --abbrev-ref HEAD)
     git fetch upstream
     git merge upstream/$BRANCH
+    ;;
+  '')
+    UPSTREAM=$(git config --get remote.upstream.url)
+    if test -z $UPSTREAM; then
+      echo "no upstream added"
+    else
+      echo $UPSTREAM
+    fi
+    ;;
+  help|-h|--help)
+    usage
+    exit
     ;;
   *)
     >&2 echo "error: '$1' is not a git-upstream command" && exit 1
