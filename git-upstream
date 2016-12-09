@@ -28,7 +28,7 @@ case $1 in
   add)
     test -z $2 && echo "owner required." 1>&2 && exit 1
     OWNER=$2
-    REPO=$(git config --get remote.origin.url | sed 's/[^\/]*\///' | sed 's/\.git$//')
+    REPO=$(git config --get remote.origin.url | sed 's/.*\///' | sed 's/\.git$//')
     git remote add upstream https://github.com/$OWNER/$REPO.git
     ;;
   remove)
