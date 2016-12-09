@@ -10,6 +10,9 @@ git upstream
 
 # Sync with upstream repository
 git upstream sync
+
+# Remove the upstream repository
+git upstream remove
 ```
 
 ## License
